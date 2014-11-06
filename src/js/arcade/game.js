@@ -10,6 +10,7 @@ class Game {
         this.height = options.height || this.element.clientHeight;
 
         this.canvas = new Canvas(this.width, this.height);
+        this.buffer = new Canvas(this.width, this.height);
 
         this.state = Game.STATE.INITIAL;
 
@@ -21,6 +22,7 @@ class Game {
         this.step = options.step || (1000 / 60);
 
         this.enableSmoothing = options.enableSmoothing !== undefined ? options.enableSmoothing : true;
+        this.enableDebug = options.enableDebug !== undefined ? options.enableDebug : false;
 
         this._debug = {
             fidelity: 0.1,
@@ -35,6 +37,7 @@ class Game {
     init () {
 
         // initialize the game, create scenes, objects, whatever
+        this.element.appendChild(this.canvas.element);
     }
 
     loop (time) {

@@ -26,7 +26,11 @@ class Entity {
             y: options.acceleration && options.acceleration.y || 0
         });
 
-        this.mass = options.mass || 1:
+        this.mass = options.mass || 1;
+
+        this._input = options.input;
+        this._physics = options.physics;
+        this._renderer = options.renderer;
 
         this.previous = {};
 
@@ -36,7 +40,7 @@ class Entity {
     capturePrevious () {
 
         this.previous.position = this.position.clone();
-        this.previous.direction = this.direction.clone();
+        this.previous.orientation = this.orientation.clone();
         this.previous.velocity = this.velocity.clone();
         this.previous.acceleration = this.acceleration.clone();
     }
@@ -93,11 +97,11 @@ class Entity {
         }
     }
 
-    render (adjust) {
+    render (context, adjust) {
 
-        if (this._graphics) {
+        if (this._renderer) {
 
-            this._graphics.render(this, adjust);
+            this._renderer.render(context, this, adjust);
         }
     }
 

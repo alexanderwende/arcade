@@ -25,7 +25,7 @@ class Renderer {
 
         context.save();
 
-        context.translate(position.x, position.y);
+        context.translate(renderPosition.x, renderPosition.y);
         context.rotate(entity.orientation.angle());
 
         context.globalAlpha = entity.alpha !== undefined ? entity.alpha : this.alpha;
@@ -33,6 +33,18 @@ class Renderer {
         context.fillStyle = entity.color || this.color;
 
         context.fillRect(-2, -2, 5, 5);
+
+        if (this.showOrientation) {
+
+            context.strokeStyle = this.color;
+            context.lineWidth = 1;
+
+            context.beginPath();
+            context.moveTo(0, 0);
+            context.lineTo(0, 10);
+
+            context.stroke();
+        }
 
         context.restore();
     }

@@ -1,35 +1,17 @@
-import Vector from './vector';
-import SpatialHash from './utils//spatial-hash';
-import * as Utils from './utils';
-
-/**
- * @class Scene
- */
 class Scene {
 
     constructor (options) {
 
         this.game = options.game;
-        this.context = options.game.context;
 
         this.width = options.width || options.game.width;
         this.height = options.height || options.game.height;
-
-        this.position = new Vector({
-            x: options.position && options.position.x || 0,
-            y: options.position && options.position.y || 0
-        });
 
         this._backgrounds = [];
 
         this._foregrounds = [];
 
-        this._bodies = [];
-
-        this._hash = new SpatialHash({
-            size: { x: options.game.width, y: options.game.height },
-            grid: { x: options.grid.x, y: options.grid.y }
-        });
+        this._entities = [];
     }
 
     init () {}
@@ -62,39 +44,37 @@ class Scene {
         }
     }
 
-    addBody (body) {
+    addEntity (entity) {
 
-        this._bodies.push(body);
-        this._hash.insert(body);
+        this._entities.push(entity);
     }
 
-    removeBody (body) {
+    removeEntity (entity) {
 
-        var index = this._bodies.indexOf(body);
+        var index = this._entities.indexOf(entity);
 
         if (index !== -1) {
-            this._bodies.splice(index, 1);
-            this._hash.remove(body);
+            this._entities.splice(index, 1);
         }
     }
 
-    getCloseBodies (body) {
+//    getCloseBodies (entity) {
+//
+//        return this._hash.retrieve(entity);
+//    }
 
-        return this._hash.retrieve(body);
-    }
-
-    getCollidingBodies (body) {
-
-        var bodies = [];
-
-        var targets = this._hash.retrieve(body);
-
-        for (let target of targets) {
-            if (Utils.isColliding(body, target)) {
-                bodies.push(target);
-            }
-        }
-    }
+//    getCollidingBodies (entity) {
+//
+//        var bodies = [];
+//
+//        var targets = this._hash.retrieve(entity);
+//
+//        for (let target of targets) {
+//            if (Utils.isColliding(entity, target)) {
+//                bodies.push(target);
+//            }
+//        }
+//    }
 
     update (step) {
 
@@ -102,16 +82,8 @@ class Scene {
             background.update(step);
         }.bind(this));
 
-        this._bodies.forEach(function (body) {
-
-            body.update(step);
-
-            if (body.position.x !== body.previous.position.x || body.position.y !== body.previous.position.y) {
-                // if the body has moved, we have to update the spatial hash
-                this._hash.remove(body, this._hash.hashKey(body.previous));
-                this._hash.insert(body);
-            }
-
+        this._entities.forEach(function (entity) {
+            entity.update(step);
         }.bind(this));
 
         this._foregrounds.forEach(function (foreground) {
@@ -119,18 +91,18 @@ class Scene {
         }.bind(this));
     }
 
-    render (adjust) {
+    render (context, adjust) {
 
         this._backgrounds.forEach(function (background) {
-            background.render(adjust);
+            background.render(context, adjust);
         }.bind(this));
 
-        this._bodies.forEach(function (body) {
-            body.render(adjust);
+        this._entities.forEach(function (entity) {
+            entity.render(context, adjust);
         }.bind(this));
 
         this._foregrounds.forEach(function (foreground) {
-            foreground.render(adjust);
+            foreground.render(context, adjust);
         }.bind(this));
     }
 }

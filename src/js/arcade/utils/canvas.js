@@ -5,11 +5,11 @@ class Canvas {
         this.width = width;
         this.height = height;
 
-        this.canvas = document.createElement('canvas');
-        this.canvas.width = width;
-        this.canvas.height = height;
+        this.element = document.createElement('canvas');
+        this.element.width = width;
+        this.element.height = height;
 
-        this.context = this.canvas.getContext('2d');
+        this.context = this.element.getContext('2d');
     }
 }
 
