@@ -33,15 +33,15 @@
             <h1>arcade</h1>
         </header>
 
-        <nav>
-            <ul>
-                <li><a href="#">Item 1</a></li>
-                <li><a href="#">Item 2</a></li>
-                <li><a href="#">Item 3</a></li>
-            </ul>
-        </nav>
-
-        <main></main>
+        <main>
+            <div id="game"></div>
+            <div id="controls">
+                <button id="start">Start</button>
+                <button id="pause">Pause</button>
+                <button id="stop">Stop</button>
+                Smoothing: <input type="checkbox" id="smoothing" checked="true"/>
+            </div>
+        </main>
 
         <!-- build:js -->
         <script src="bower_components/less/dist/less-1.7.5.min.js"></script>

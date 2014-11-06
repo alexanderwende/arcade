@@ -1,5 +1,35 @@
 @import (less) "/bower_components/normalize.css/normalize.css";
+@import "mixins.less";
 
 body {
-    font-size: 12px;
+    font: 12px/normal Arial, sans-serif;
+    background: #eee;
+}
+
+header {
+    padding: 2em;
+    border-bottom: 1px solid #333;
+    .gradient(#444, #404040);
+    .drop-shadow();
+
+    h1 {
+        margin: 0;
+        color: #fff;
+        font-size: 1em;
+        line-height: 1em;
+        text-transform: uppercase;
+        .text-shadow();
+    }
+}
+
+main {
+    padding: 2em;
+}
+
+#game {
+    width: 800px;
+    height: 600px;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+    background: #fff;
 }
