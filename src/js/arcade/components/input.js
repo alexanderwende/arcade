@@ -1,6 +1,6 @@
 import Command from './command';
 
-class InputHandler {
+class Input {
 
     constructor (options) {
 
@@ -67,7 +67,7 @@ class InputHandler {
     }
 }
 
-InputHandler.KEYS = {
+Input.KEYS = {
     LEFT: 37,
     UP: 38,
     RIGHT: 39,
@@ -76,4 +76,4 @@ InputHandler.KEYS = {
     ENTER: 13
 };
 
-export default InputHandler;
+export default Input;
