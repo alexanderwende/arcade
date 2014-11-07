@@ -12,7 +12,27 @@ const GRAVITY = 9.81;
 
 class Physics {
 
-    constructor (options) {}
+    constructor (options) {
+
+        this.gravity = options.gravity !== undefined ? options.gravity : GRAVITY;
+
+        this.enableGravity = options.enableGravity !== undefined ? options.enableGravity : false;
+    }
+
+    integrateEuler (entity, netForce, )
+
+//    integrateVerlet (x, v, a, dt) {
+//
+//        a = {x, y}
+//
+//        f = m * a;
+//
+//        a = f / m;
+//
+//        v = s / t;
+//
+//        a = dv / dt = (ds / dt) / dt = ds / dt^2;
+//    }
 
     getDragForce (velocity, area, shape, density) {
 
@@ -23,6 +43,17 @@ class Physics {
 
         return 0.5 * density * Math.pow(velocity, 2) * drag * area;
     }
+
+//    applyForce (entity, force, step) {
+//
+//        var acceleration = force.scale(1 / entity.mass);
+//
+//        //
+//
+//        entity.velocity.scale(acceleration.x * step / 1000, acceleration.y * step / 1000);
+//    }
+
+    applyImpulse (entity, impulse, step) {}
 
     update (entity, step) {
 

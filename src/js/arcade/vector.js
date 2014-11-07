@@ -34,6 +34,14 @@ class Vector {
         return this;
     }
 
+    translate (x, y) {
+
+        this.x += x;
+        this.y += y;
+
+        return this;
+    }
+
     scale (factor) {
 
         this.x *= factor;
@@ -63,6 +71,14 @@ class Vector {
             y: this.y
         });
     }
+}
+
+Vector.fromAngle = function (angle) {
+
+    return new Vector({
+        x: -Math.sin(angle),
+        y: Math.cos(angle)
+    });
 }
 
 export default Vector;

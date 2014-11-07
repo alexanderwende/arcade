@@ -1,6 +1,7 @@
 import Game from './arcade/game';
 import Scene from './arcade/scene';
 import Entity from './arcade/entity';
+import Physics from './arcade/components/physics';
 import Renderer from './arcade/components/renderer';
 
 import Input from './arcade/components/input';
@@ -42,6 +43,9 @@ class TestScene extends Scene {
                 x: 0,
                 y: -1
             },
+            physics: new Physics({
+                enableGravity: true
+            }),
             renderer: new Renderer({
                 showOrientation: true
             }),
