@@ -1,3 +1,7 @@
+const PI        = Math.PI;
+const PI_HALF   = Math.PI / 2;
+const PI_DOUBLE = Math.PI * 2;
+
 class Vector {
 
     constructor (options) {
@@ -11,7 +15,12 @@ class Vector {
         return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
     }
 
-    angle () {
+    angle (vector) {
+
+        if (vector !== undefined) {
+
+            return Vector.angle(this, vector);
+        }
 
         return Math.atan2(this.x, this.y);
     }
@@ -64,6 +73,11 @@ class Vector {
         return this;
     }
 
+    dotProduct (vector) {
+
+        return Vector.dotProduct(this, vector);
+    }
+
     clone () {
 
         return new this.constructor({
@@ -73,12 +87,75 @@ class Vector {
     }
 }
 
+/**
+ * The angle product between two vectors
+ *
+ * @param {Vector} a
+ * @param {Vector} b
+ */
+Vector.angle = function (a, b) {
+
+    var dotProduct = Vector.dotProduct(a, b);
+
+    if (dotProduct === 0) return PI_HALF;
+
+    var lengthA = a.length();
+    var lengthB = b.length();
+
+    return Math.acos(dotProduct / (lengthA * lengthB));
+};
+
+/**
+ * The distance product between two vectors
+ *
+ * @param {Vector} a
+ * @param {Vector} b
+ */
+Vector.distance = function (a, b) {
+
+    return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+};
+
+/**
+ * The dot product of two vectors
+ *
+ * @param {Vector} a
+ * @param {Vector} b
+ */
+Vector.dotProduct = function (a, b) {
+
+    return a.x * b.x + a.y + b.y;
+};
+
+/**
+ * Add two or more vectors
+ *
+ * @param {Vector} [...a]
+ */
+Vector.add = function () {
+
+    let x = 0,
+        y = 0;
+
+    for (let i = 0; i < arguments.length; i++) {
+        x += arguments[i].x;
+        y += arguments[i].y;
+    }
+
+    return new Vector({x: x, y: y});
+}
+
+/**
+ * Create a vector from an angle
+ *
+ * @param {number} angle
+ */
 Vector.fromAngle = function (angle) {
 
     return new Vector({
         x: -Math.sin(angle),
         y: Math.cos(angle)
     });
-}
+};
 
 export default Vector;
