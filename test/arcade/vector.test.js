@@ -112,9 +112,9 @@ describe('Vector', function () {
 
             var v = new Vector({ x: 0, y: 4 });
 
-            assert.equal(v.angle(), Math.PI * 0.5);
+            assert.equal(v.angle(new Vector({ x: 0, y: 1 })), 0);
 
-            assert.equal(v.angle(new Vector({x: 1, y: 0})), Math.PI * 0.5);
+            assert.equal(v.angle(new Vector({ x: 1, y: 0 })), Math.PI * 0.5);
         });
     });
 
@@ -151,14 +151,14 @@ describe('Vector', function () {
             var v = new Vector({ x: 3, y: 3 });
 
             assert.equal(v.length(), Math.sqrt(18));
-            assert.equal(v.angle(), Math.PI / 4);
+            assert.equal(v.orientation(), Math.PI / 4);
 
             v.normalize();
 
             // length should be 1
             assert.equal(v.length(), 1);
             // angle should not change
-            assert.equal(v.angle(), Math.PI / 4);
+            assert.equal(v.orientation(), Math.PI / 4);
         });
     });
 

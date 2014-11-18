@@ -24,12 +24,7 @@ class Vector {
 
     angle (vector) {
 
-        if (vector !== undefined) {
-
-            return Vector.angle(this, vector);
-        }
-
-        return this.orientation();
+        return Vector.angle(this, vector);
     }
 
     distance (vector) {
@@ -113,16 +108,15 @@ Vector.angle = function (a, b) {
 
     if (dotProduct === 0) return PI_HALF;
 
-    var lengthA = a.length();
-    var lengthB = b.length();
+    var angle = Math.acos(2 * (Math.pow(dotProduct, 2) / ((Math.pow(a.x, 2) + Math.pow(a.y, 2)) * (Math.pow(b.x, 2) + Math.pow(b.y, 2)))) - 1) / 2;
 
-    return Math.acos(dotProduct / (lengthA * lengthB));
+    return (dotProduct < 0) ? PI - angle : angle;
 };
 
-Vector.angle2 = function (a, b) {
-
-    return Math.acos(2 * (Math.pow(a.x * b.x + a.y * b.y, 2) / ((a.x * a.x + a.y * a.y) * (b.x * b.x + b.y * b.y))) - 1) / 2;
-};
+//Vector.angle = function (a, b) {
+//
+//    return Math.acos(2 * (Math.pow(a.x * b.x + a.y * b.y, 2) / ((a.x * a.x + a.y * a.y) * (b.x * b.x + b.y * b.y))) - 1) / 2;
+//};
 
 /**
  * The distance between two vectors
