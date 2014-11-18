@@ -15,6 +15,13 @@ class Vector {
         return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
     }
 
+    orientation () {
+
+        let angle = Math.acos(this.x / this.length());
+
+        return this.y < 0 ? PI_DOUBLE - angle : angle;
+    }
+
     angle (vector) {
 
         if (vector !== undefined) {
@@ -22,12 +29,12 @@ class Vector {
             return Vector.angle(this, vector);
         }
 
-        return Math.atan2(this.x, this.y);
+        return this.orientation();
     }
 
     distance (vector) {
 
-        return Math.sqrt(Math.pow(this.x - vector.x, 2) + Math.pow(this.y - vector.y, 2));
+        return Vector.distance(this, vector);
     }
 
     normalize () {
@@ -43,10 +50,10 @@ class Vector {
         return this;
     }
 
-    translate (x, y) {
+    translate (vector) {
 
-        this.x += x;
-        this.y += y;
+        this.x += vector.x;
+        this.y += vector.y;
 
         return this;
     }
@@ -71,6 +78,13 @@ class Vector {
         this.y = y;
 
         return this;
+    }
+
+    add (...vectors) {
+
+        let args = [this, ...vectors];
+
+        return Vector.add(...args);
     }
 
     dotProduct (vector) {
@@ -105,8 +119,13 @@ Vector.angle = function (a, b) {
     return Math.acos(dotProduct / (lengthA * lengthB));
 };
 
+Vector.angle2 = function (a, b) {
+
+    return Math.acos(2 * (Math.pow(a.x * b.x + a.y * b.y, 2) / ((a.x * a.x + a.y * a.y) * (b.x * b.x + b.y * b.y))) - 1) / 2;
+};
+
 /**
- * The distance product between two vectors
+ * The distance between two vectors
  *
  * @param {Vector} a
  * @param {Vector} b
@@ -124,26 +143,26 @@ Vector.distance = function (a, b) {
  */
 Vector.dotProduct = function (a, b) {
 
-    return a.x * b.x + a.y + b.y;
+    return a.x * b.x + a.y * b.y;
 };
 
 /**
  * Add two or more vectors
  *
- * @param {Vector} [...a]
+ * @param {...Vector} vectors
  */
-Vector.add = function () {
+Vector.add = function (...vectors) {
 
     let x = 0,
         y = 0;
 
-    for (let i = 0; i < arguments.length; i++) {
-        x += arguments[i].x;
-        y += arguments[i].y;
-    }
+    vectors.forEach(function (vector) {
+        x += vector.x;
+        y += vector.y;
+    });
 
     return new Vector({x: x, y: y});
-}
+};
 
 /**
  * Create a vector from an angle
