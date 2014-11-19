@@ -41,7 +41,7 @@ class TestScene extends Scene {
             },
             orientation: {
                 x: 0,
-                y: -1
+                y: 1
             },
             physics: new Physics({
                 enableGravity: true
@@ -77,6 +77,8 @@ export default class TestGame extends Game {
     render (adjust) {
 
         this.context.clearRect(0, 0, this.width, this.height);
+
+        this.context.setTransform(1, 0, 0, -1, 0, this.height);
 
         this.scene.render(this.context, adjust);
     }

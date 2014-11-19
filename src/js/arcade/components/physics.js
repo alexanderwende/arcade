@@ -19,8 +19,6 @@ class Physics {
         this.enableGravity = options.enableGravity !== undefined ? options.enableGravity : false;
     }
 
-    integrateEuler (entity, netForce) {}
-
 //    integrateVerlet (x, v, a, dt) {
 //
 //        a = {x, y}
@@ -34,15 +32,15 @@ class Physics {
 //        a = dv / dt = (ds / dt) / dt = ds / dt^2;
 //    }
 
-    getDragForce (velocity, area, shape, density) {
-
-        var velocity = velocity,
-            density = density || AIR_DENSITY,
-            area = area,
-            drag = shape ? DRAG_COEFFICIENTS[shape] : DRAG_COEFFICIENTS.CUBE;
-
-        return 0.5 * density * Math.pow(velocity, 2) * drag * area;
-    }
+//    getDragForce (velocity, area, shape, density) {
+//
+//        var velocity = velocity,
+//            density = density || AIR_DENSITY,
+//            area = area,
+//            drag = shape ? DRAG_COEFFICIENTS[shape] : DRAG_COEFFICIENTS.CUBE;
+//
+//        return 0.5 * density * Math.pow(velocity, 2) * drag * area;
+//    }
 
 //    applyForce (entity, force, step) {
 //
@@ -53,18 +51,15 @@ class Physics {
 //        entity.velocity.scale(acceleration.x * step / 1000, acceleration.y * step / 1000);
 //    }
 
-    applyImpulse (entity, impulse, step) {}
+//    applyImpulse (entity, impulse, step) {}
 
     update (entity, step) {
 
-        entity.position.x += entity.direction.x * (entity.velocity / 1000) * step;
-        entity.position.y += entity.direction.y * (entity.velocity / 1000) * step;
+        entity.position.x += (entity.velocity.x / 1000) * step;
+        entity.position.y += (entity.velocity.y / 1000) * step;
 
-        entity.velocity += (entity.acceleration / 1000) * step;
-
-        if (entity.velocity < 0) {
-            entity.velocity = 0;
-        }
+        entity.velocity.x += (entity.acceleration.x / 1000) * step;
+        entity.velocity.y += (entity.acceleration.y / 1000) * step;
     }
 }
 
