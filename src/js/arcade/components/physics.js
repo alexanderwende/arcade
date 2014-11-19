@@ -19,7 +19,7 @@ class Physics {
         this.enableGravity = options.enableGravity !== undefined ? options.enableGravity : false;
     }
 
-    integrateEuler (entity, netForce, )
+    integrateEuler (entity, netForce) {}
 
 //    integrateVerlet (x, v, a, dt) {
 //

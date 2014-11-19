@@ -108,7 +108,9 @@ Vector.angle = function (a, b) {
 
     if (dotProduct === 0) return PI_HALF;
 
-    var angle = Math.acos(2 * (Math.pow(dotProduct, 2) / ((Math.pow(a.x, 2) + Math.pow(a.y, 2)) * (Math.pow(b.x, 2) + Math.pow(b.y, 2)))) - 1) / 2;
+    var angle = Math.acos(
+        2 * (Math.pow(dotProduct, 2) / ((Math.pow(a.x, 2) + Math.pow(a.y, 2)) * (Math.pow(b.x, 2) + Math.pow(b.y, 2)))) - 1
+    ) / 2;
 
     return (dotProduct < 0) ? PI - angle : angle;
 };

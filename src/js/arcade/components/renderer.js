@@ -26,7 +26,7 @@ class Renderer {
         context.save();
 
         context.translate(renderPosition.x, renderPosition.y);
-        context.rotate(entity.orientation.angle());
+        context.rotate(entity.orientation.orientation());
 
         context.globalAlpha = entity.alpha !== undefined ? entity.alpha : this.alpha;
 
