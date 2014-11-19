@@ -1,4 +1,6 @@
 import Vector from './vector';
+import Shape from './shape';
+import Material from './material';
 
 class Entity {
 
