@@ -36,6 +36,8 @@ class Entity {
         this._physics = options.physics;
         this._renderer = options.renderer;
 
+        this.isHidden = options.isHidden || false;
+
         this.previous = {};
 
         this.capturePrevious();
