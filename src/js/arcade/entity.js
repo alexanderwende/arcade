@@ -29,6 +29,8 @@ class Entity {
         });
 
         this.mass = options.mass || 1;
+        this.shape = options.shape;
+        this.material = options.material;
 
         this._input = options.input;
         this._physics = options.physics;
