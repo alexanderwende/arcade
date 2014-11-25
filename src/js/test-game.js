@@ -23,7 +23,10 @@ class RotateRightCommand extends Command {
     }
 }
 
+class TestEntity extends Entity {
 
+
+}
 
 class TestScene extends Scene {
 
@@ -43,12 +46,8 @@ class TestScene extends Scene {
                 x: 0,
                 y: 1
             },
-            physics: new Physics({
-                enableGravity: true
-            }),
-            renderer: new Renderer({
-                showOrientation: true
-            }),
+            physics: Physics,
+            renderer: Renderer,
             input: this.input
         }));
     }

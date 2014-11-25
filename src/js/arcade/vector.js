@@ -77,9 +77,12 @@ class Vector {
 
     add (...vectors) {
 
-        let args = [this, ...vectors];
+        vectors.forEach(function (vector) {
+            this.x += vector.x;
+            this.y += vector.y;
+        }.bind(this));
 
-        return Vector.add(...args);
+        return this;
     }
 
     dotProduct (vector) {
@@ -97,7 +100,7 @@ class Vector {
 }
 
 /**
- * The angle product between two vectors
+ * The angle between two vectors
  *
  * @param {Vector} a
  * @param {Vector} b

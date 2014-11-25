@@ -28,13 +28,21 @@ class Entity {
             y: options.acceleration && options.acceleration.y || 0
         });
 
+        this.force = new Vector({ x: 0, y: 0 });
+
         this.mass = options.mass || 1;
         this.shape = options.shape;
         this.material = options.material;
 
         this._input = options.input;
-        this._physics = options.physics;
-        this._renderer = options.renderer;
+
+        if (options.physics) {
+            options.physics.plug(this);
+        }
+
+        if (options.renderer) {
+            options.renderer.plug(this);
+        }
 
         this.isHidden = options.isHidden || false;
 
@@ -96,19 +104,18 @@ class Entity {
                 command.execute(this);
             }.bind(this));
         }
-
-        if (this._physics) {
-
-            this._physics.update(this, step);
-        }
     }
 
-    render (context, adjust) {
+    render (context, adjust) {}
 
-        if (this._renderer) {
+    plug (component) {
 
-            this._renderer.render(context, this, adjust);
-        }
+        component.plug(this);
+    }
+
+    unplug (component) {
+
+        component.unplug(this);
     }
 
     destroy () {
