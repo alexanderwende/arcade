@@ -1,0 +1,6 @@
+class RenderSystem {
+
+    constructor (options) {}
+
+
+}
