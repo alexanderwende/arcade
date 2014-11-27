@@ -22,4 +22,6 @@ class Direction {
     }
 }
 
+Direction.name = 'direction';
+
 export default Direction;

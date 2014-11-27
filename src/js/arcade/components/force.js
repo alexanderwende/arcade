@@ -7,4 +7,6 @@ class Force {
     }
 }
 
+Force.name = 'force';
+
 export default Force;

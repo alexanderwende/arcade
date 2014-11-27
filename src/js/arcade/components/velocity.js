@@ -7,4 +7,6 @@ class Velocity {
     }
 }
 
+Velocity.name = 'velocity';
+
 export default Velocity;

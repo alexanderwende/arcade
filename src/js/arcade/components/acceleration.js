@@ -7,4 +7,6 @@ class Acceleration {
     }
 }
 
+Acceleration.name = 'acceleration';
+
 export default Acceleration;

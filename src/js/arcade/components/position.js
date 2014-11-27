@@ -7,4 +7,6 @@ class Position {
     }
 }
 
+Position.name = 'position';
+
 export default Position;

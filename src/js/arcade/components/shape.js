@@ -8,6 +8,8 @@ class Shape {
     }
 }
 
+Shape.name = 'shape';
+
 Shape.TYPE = {
     NONE: 0,
     LINE: 1,
