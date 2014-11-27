@@ -1,4 +1,4 @@
-class Position {
+class Velocity {
 
     constructor (options) {
 
@@ -7,4 +7,4 @@ class Position {
     }
 }
 
-export default Position;
+export default Velocity;

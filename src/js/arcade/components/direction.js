@@ -2,39 +2,23 @@ class Direction {
 
     constructor (options) {
 
-        if (options.angle) {
+        this.orientation = options.orientation !== undefined ? options.orientation : 0;
 
-            this.x = -Math.sin(options.angle);
-            this.y = Math.cos(options.angle);
-            this.angle = options.angle;
-        }
-        else {
-
-            this.x = options.x;
-            this.y = options.y;
-
-            let angle = Math.acos(this.x / this.length());
-
-            this.angle = this.y < 0 ? PI_DOUBLE - angle : angle;
-        }
+        this.x = Math.cos(this.orientation);
+        this.y = Math.sin(this.orientation);
     }
 
-    length () {
+    get orientation () {
 
-        return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
+        return this.orientation;
     }
 
-    normalize () {
+    set orientation (orientation) {
 
-        var length = this.length();
+        this.orientation = orientation;
 
-        if (length !== 1) {
-
-            this.x = this.x / length;
-            this.y = this.y / length;
-        }
-
-        return this;
+        this.x = Math.cos(this.orientation);
+        this.y = Math.sin(this.orientation);
     }
 }
 
