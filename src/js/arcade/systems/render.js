@@ -4,3 +4,5 @@ class RenderSystem {
 
 
 }
+
+export default RenderSystem;
