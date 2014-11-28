@@ -7,6 +7,6 @@ class Force {
     }
 }
 
-Force.name = 'force';
+Force.id = 'force';
 
 export default Force;

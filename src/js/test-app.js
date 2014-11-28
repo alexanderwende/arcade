@@ -4,8 +4,11 @@ import Entity from './arcade/entity';
 import Position from './arcade/components/position';
 import Velocity from './arcade/components/velocity';
 import Gravity from './arcade/components/gravity';
+import Force from './arcade/components/force';
 import Shape from './arcade/components/shape';
+import Input from './arcade/components/input';
 
+import InputSystem from './arcade/systems/input';
 import PhysicsSystem from './arcade/systems/physics';
 import RenderSystem from './arcade/systems/render';
 
@@ -23,6 +26,8 @@ import RenderSystem from './arcade/systems/render';
 
     var world = new World();
 
+    world.addSystem(new InputSystem({}));
+
     world.addSystem(new PhysicsSystem({}));
 
     world.addSystem(new RenderSystem({
@@ -31,8 +36,8 @@ import RenderSystem from './arcade/systems/render';
 
     var entity = new Entity()
         .addComponent(new Position({
-            x: canvas.width / 2,
-            y: canvas.height / 2
+            x: 2,
+            y: 0.5
         }))
         .addComponent(new Velocity({
             x: 0,
@@ -41,25 +46,41 @@ import RenderSystem from './arcade/systems/render';
         .addComponent(new Gravity({}))
         .addComponent(new Shape({
             type: Shape.TYPE.TRIANGLE,
-            width: 50,
-            height: 50
+            width: 1,
+            height: 1
         }));
 
     world.addEntity(entity);
 
     entity = new Entity()
         .addComponent(new Position({
-            x: canvas.width / 2,
-            y: canvas.height / 2
+            x: 10,
+            y: 10
         }))
         .addComponent(new Velocity({
-            x: 100,
+            x: 0,
             y: 0
         }))
-        //.addComponent(new Gravity({}))
+        .addComponent(new Force({}))
+        .addComponent(new Input({
+            keys: {
+                37: function (entity, world) {
+                    entity.components.force.x -= 5;
+                },
+                38: function (entity, world) {
+                    entity.components.force.y -= 5;
+                },
+                39: function (entity, world) {
+                    entity.components.force.x += 5;
+                },
+                40: function (entity, world) {
+                    entity.components.force.y -+ 5;
+                }
+            }
+        }))
         .addComponent(new Shape({
             type: Shape.TYPE.CIRCLE,
-            radius: 20
+            radius: 0.5
         }));
 
     world.addEntity(entity);

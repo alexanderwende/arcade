@@ -10,6 +10,15 @@ class RenderSystem {
 
         this.context = options.context;
 
+        this.viewport = {
+            width: this.context.canvas.width,
+            height: this.context.canvas.height,
+            x: 0,
+            y: 0,
+            scaleX: 20,
+            scaleY: 20
+        }
+
         this.isEmpty = true;
 
         this.enableBuffering = options.enableBuffering || true;
@@ -21,7 +30,9 @@ class RenderSystem {
 
         var i, count;
 
-        this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+        this.context.setTransform(this.viewport.scaleX, 0, 0, this.viewport.scaleY, 0, 0);
+
+        this.context.clearRect(0, 0, this.viewport.width, this.viewport.height);
 
         for (i = 0, count = entities.length; i < count; i++) {
 
