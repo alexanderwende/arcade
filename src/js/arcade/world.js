@@ -21,11 +21,14 @@ class World {
         }
     }
 
-    createEntity () {
+    addEntity (entity) {
 
-        let id = this._entities.length;
+        this._entities[entity.id] = entity;
+    }
 
-        return id;
+    removeEntity (entity) {
+
+        this._entities.splice(entity.id, 1);
     }
 
     update () {

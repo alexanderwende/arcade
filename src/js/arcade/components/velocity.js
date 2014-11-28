@@ -7,6 +7,6 @@ class Velocity {
     }
 }
 
-Velocity.name = 'velocity';
+Velocity.id = 'velocity';
 
 export default Velocity;

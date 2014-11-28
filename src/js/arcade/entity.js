@@ -135,19 +135,19 @@ class Entity {
 
     addComponent (component) {
 
-        this.components[component.mask] = component;
+        this.components[component.constructor.id] = component;
 
         return this;
     }
 
-    getComponent (mask) {
+    getComponent (id) {
 
-        return this.components[mask];
+        return this.components[id];
     }
 
     removeComponent (component) {
 
-        delete this.components[component.mask];
+        delete this.components[component.constructor.id];
 
         return this;
     }
@@ -156,7 +156,7 @@ class Entity {
 
     static createUniqueId () {
 
-        return (new Date().getTime() + (this.constructor._count++)).toString(16);
+        return this._count++;
     }
 }
 

@@ -1,19 +1,40 @@
 class PhysicsSystem {
 
-    constructor (options) {}
+    constructor (options) {
 
+        this.timeStep = options.timeStep !== undefined ? options.timeStep : (1 / 60);
 
+        this.gravity = options.gravity !== undefined ? options.gravity : { x: 0, y: 9.81 };
+    }
 
     update (entities, world) {
 
-        var id = 0,
-            count = entities.length;
+        var i, count;
 
-        for (id; id < count; id++) {
+        for (i = 0, count = entities.length; i < count; i++) {
 
-            let entity = entities[id];
+            let entity = entities[i];
+            let position = entity.components.position;
+            let velocity = entity.components.velocity;
+            let gravity = entity.components.gravity;
 
-            if (entity.components.position) {}
+            if (position) {
+
+                position.previous.x = position.x;
+                position.previous.y = position.y;
+            }
+
+            if (gravity && velocity) {
+
+                velocity.x += gravity.gravityScale * this.gravity.x * this.timeStep;
+                velocity.y += gravity.gravityScale * this.gravity.y * this.timeStep;
+            }
+
+            if (position && velocity) {
+
+                position.x += velocity.x * this.timeStep;
+                position.y += velocity.y * this.timeStep;
+            }
         }
     }
 }

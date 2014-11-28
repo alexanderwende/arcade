@@ -34,6 +34,7 @@
             <menu id="controls">
                 <button id="start">Start</button>
                 <button id="pause">Pause</button>
+                <button id="step">Step</button>
                 <button id="stop">Stop</button>
                 Smoothing: <input type="checkbox" id="smoothing" checked="true"/>
             </menu>
@@ -57,7 +58,7 @@
                 baseURL: 'js'
             });
 
-            System.import('app').catch(console.error.bind(console));
+            System.import('test-app').catch(console.error.bind(console));
 
         </script>
     </body>
