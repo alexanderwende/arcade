@@ -1,9 +1,10 @@
-class Velocity {
+import Vector from './vector';
+
+class Velocity extends Vector {
 
     constructor (options) {
 
-        this.x = options.x !== undefined ? options.x : 0;
-        this.y = options.y !== undefined ? options.y : 0;
+        super(options);
     }
 }
 

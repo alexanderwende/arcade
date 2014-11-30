@@ -1,9 +1,10 @@
-class Position {
+import Vector from './vector';
+
+class Position extends Vector {
 
     constructor (options) {
 
-        this.x = options.x !== undefined ? options.x : 0;
-        this.y = options.y !== undefined ? options.y : 0;
+        super(options);
 
         this.previous = {
             x: this.x,

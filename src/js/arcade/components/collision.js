@@ -1,6 +1,9 @@
 class Collision {
 
-    constructor (options) {}
+    constructor (options) {
+
+        this.shape = options.shape;
+    }
 }
 
 Collision.id = 'collision';

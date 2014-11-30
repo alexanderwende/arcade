@@ -18,6 +18,7 @@ class PhysicsSystem {
             let velocity = entity.components.velocity;
             let gravity = entity.components.gravity;
             let force = entity.components.force;
+            let mass = entity.components.mass;
 
             if (position) {
 
@@ -33,8 +34,8 @@ class PhysicsSystem {
 
             if (force && velocity) {
 
-                velocity.x += force.x * this.timeStep;
-                velocity.y += force.y * this.timeStep;
+                velocity.x += (mass ? mass.inverseMass : 1) * force.x * this.timeStep;
+                velocity.y += (mass ? mass.inverseMass : 1) * force.y * this.timeStep;
 
                 force.x = 0;
                 force.y = 0;

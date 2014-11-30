@@ -4,6 +4,7 @@ class World {
 
         this._systems = [];
         this._entities = [];
+        this._collidables = [];
     }
 
     addSystem (system) {
@@ -24,11 +25,26 @@ class World {
     addEntity (entity) {
 
         this._entities[entity.id] = entity;
+
+        if (entity.components.collision) {
+            this._collidables.push(entity);
+        }
     }
 
     removeEntity (entity) {
 
         this._entities.splice(entity.id, 1);
+
+        if (entity.components.collision) {
+            this._collidables.splice(this._collidables.indexOf(entity), 1);
+        }
+    }
+
+    getCollisionCandidates (entity) {
+
+        return this._collidables.filter(function (collidable) {
+            return collidable !== entity;
+        });
     }
 
     update () {

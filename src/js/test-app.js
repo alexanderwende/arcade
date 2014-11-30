@@ -5,11 +5,14 @@ import Position from './arcade/components/position';
 import Velocity from './arcade/components/velocity';
 import Gravity from './arcade/components/gravity';
 import Force from './arcade/components/force';
+import Mass from './arcade/components/mass';
 import Shape from './arcade/components/shape';
 import Input from './arcade/components/input';
+import Collision from './arcade/components/collision';
 
 import InputSystem from './arcade/systems/input';
 import PhysicsSystem from './arcade/systems/physics';
+import CollisionSystem from './arcade/systems/collision';
 import RenderSystem from './arcade/systems/render';
 
 (function (window) {
@@ -30,9 +33,16 @@ import RenderSystem from './arcade/systems/render';
 
     world.addSystem(new PhysicsSystem({}));
 
+    world.addSystem(new CollisionSystem({}));
+
     world.addSystem(new RenderSystem({
         context: canvas.getContext('2d')
     }));
+
+    var shape = new Shape({
+        type: Shape.TYPE.CIRCLE,
+        radius: 1
+    });
 
     var entity = new Entity()
         .addComponent(new Position({
@@ -40,15 +50,38 @@ import RenderSystem from './arcade/systems/render';
             y: 0.5
         }))
         .addComponent(new Velocity({
-            x: 0,
+            x: 2,
             y: 0
         }))
         .addComponent(new Gravity({}))
-        .addComponent(new Shape({
-            type: Shape.TYPE.TRIANGLE,
-            width: 1,
-            height: 1
-        }));
+        .addComponent(new Collision({
+            shape: shape
+        }))
+        .addComponent(new Mass({mass: 0.5}))
+        .addComponent(shape);
+
+    world.addEntity(entity);
+
+    shape = new Shape({
+        type: Shape.TYPE.CIRCLE,
+        radius: 1
+    });
+
+    entity = new Entity()
+        .addComponent(new Position({
+            x: 8,
+            y: 0.5
+        }))
+        .addComponent(new Velocity({
+            x: -1,
+            y: 0
+        }))
+        .addComponent(new Gravity({}))
+        .addComponent(new Collision({
+            shape: shape
+        }))
+        .addComponent(new Mass({mass: 0.1}))
+        .addComponent(shape);
 
     world.addEntity(entity);
 
@@ -62,6 +95,7 @@ import RenderSystem from './arcade/systems/render';
             y: 0
         }))
         .addComponent(new Force({}))
+        .addComponent(new Mass({mass: 0.5}))
         .addComponent(new Input({
             keys: {
                 37: function (entity, world) {
