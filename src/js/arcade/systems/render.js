@@ -34,6 +34,11 @@ class RenderSystem {
 
         this.context.clearRect(0, 0, this.viewport.width, this.viewport.height);
 
+        this.context.globalAlpha = 1;
+        this.context.fillStyle = '#000';
+        this.context.strokeStyle = '#000';
+        this.context.lineWidth = 1;
+
         for (i = 0, count = entities.length; i < count; i++) {
 
             let entity = entities[i];
@@ -60,13 +65,6 @@ class RenderSystem {
         context.transform(1, 0, 0, 1, position.x, position.y);
 
         switch (shape.type) {
-
-//            case Shape.TYPE.LINE:
-//                context.beginPath();
-//                context.moveTo(0, 0);
-//                context.lineTo(0, 10);
-//                context.stroke();
-//                break;
 
             case Shape.TYPE.RECT:
 

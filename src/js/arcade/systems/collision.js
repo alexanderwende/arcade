@@ -1,75 +1,12 @@
-class Vector {
-
-    static add (...vectors) {
-
-        let x = vectors[0].x,
-            y = vectors[0].y;
-
-        for (let i = 1, length = vectors.length; i < length; i++) {
-            x += vectors[i].x;
-            y += vectors[i].y;
-        }
-
-        return {x: x, y: y};
-    }
-
-    static subtract (...vectors) {
-
-        let x = vectors[0].x,
-            y = vectors[0].y;
-
-        for (let i = 1, length = vectors.length; i < length; i++) {
-            x -= vectors[i].x;
-            y -= vectors[i].y;
-        }
-
-        return {x: x, y: y};
-    }
-
-    static multiply (...vectors) {
-
-        let x = vectors[0].x,
-            y = vectors[0].y;
-
-        for (let i = 1, length = vectors.length; i < length; i++) {
-            x *= vectors[i].x;
-            y *= vectors[i].y;
-        }
-
-        return {x: x, y: y};
-    }
-
-    static dotProduct (vector1, vector2) {
-
-        return vector1.x * vector2.x + vector1.y * vector2.y;
-    }
-
-    static scale (vector, factor) {
-
-        return { x: vector.x * factor, y: vector.y * factor };
-    }
-
-    static magnitude (vector) {
-
-        return Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
-    }
-
-    static distance (vector1, vector2) {
-
-        return Math.sqrt(Math.pow(vector1.x - vector2.x, 2) + Math.pow(vector1.y - vector2.y, 2));
-    }
-
-    static normalize (vector) {
-
-        let length = Vector.length(vector);
-
-        return { x: vector.x / length, y: vector.y / length };
-    }
-}
+import Vector from '../components/vector';
 
 class CollisionSystem {
 
-    constructor (options) {}
+    constructor (options) {
+
+        this.positionCorrectionFactor = options.positionCorrectionFactor !== undefined ? options.positionCorrectionFactor : 0.2;
+        this.positionCorrectionThreshold = options.positionCorrectionThreshold !== undefined ? options.positionCorrectionThreshold : 0.01;
+    }
 
     update (entities, world) {
 
@@ -183,7 +120,7 @@ class CollisionSystem {
         if (relativeVelocityProjection > 0) { return; }
 
         // TODO: calculate correct restitution
-        var restitution = 1;
+        var restitution = 0;
 
         var impulseScalar = -(1 + restitution) * relativeVelocityProjection;
         impulseScalar /= (entityA.components.mass.inverseMass + entityB.components.mass.inverseMass);
@@ -192,6 +129,25 @@ class CollisionSystem {
 
         entityA.components.velocity.subtract(Vector.scale(impulse, entityA.components.mass.inverseMass));
         entityB.components.velocity.add(Vector.scale(impulse, entityB.components.mass.inverseMass));
+
+        this.correctPosition(manifold);
+    }
+
+    correctPosition (manifold) {
+
+        var penetration = manifold.penetration - this.positionCorrectionThreshold;
+
+        if (penetration > 0) {
+
+            let a = manifold.a;
+            let b = manifold.b;
+
+            let correctionScalar = (penetration / (a.components.mass.inverseMass + b.components.mass.inverseMass)) * this.positionCorrectionFactor;
+            let correctionVector = Vector.scale(manifold.normal, correctionScalar);
+
+            a.components.position.subtract(Vector.scale(correctionVector, a.components.mass.inverseMass));
+            b.components.position.add(Vector.scale(correctionVector, b.components.mass.inverseMass));
+        }
     }
 }
 
