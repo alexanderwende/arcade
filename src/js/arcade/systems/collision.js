@@ -53,6 +53,30 @@ class CollisionSystem {
         return { xmin: position.x - width, ymin: position.y - height, xmax: position.x + width, ymax: position.y + height };
     }
 
+    getAABB (entity) {
+
+        var position = entity.components.position;
+        var collision = entity.components.collision;
+
+        var width = collision.shape.width !== undefined ? collision.shape.width / 2 : collision.shape.radius;
+        var height = collision.shape.height !== undefined ? collision.shape.height / 2 : collision.shape.radius;
+
+        return {
+            x: position.x,
+            y: position.y,
+            width: width * 2,
+            height: height * 2,
+            min: {
+                x: position.x - width,
+                y: position.y - height
+            },
+            max: {
+                x: position.x + width,
+                y: position.y + height
+            }
+        };
+    }
+
     getBoundingCircle (entity) {
 
         var position = entity.components.position;
@@ -65,14 +89,54 @@ class CollisionSystem {
         return { x: position.x, y: position.y, radius: radius };
     }
 
-    boxVsBox (box1, box2) {
+    AABBvsAABB (box1, box2) {
 
-        var colliding = box1.xmax >= box2.xmin &&
-                        box1.xmin <= box2.xmax &&
-                        box1.ymax >= box2.ymin &&
-                        box1.ymin <= box2.ymax;
+        var normal = Vector.subtract(box2, box1);
 
-        return colliding;
+        var xOverlap = (box1.width + box2.width) / 2 - Math.abs(normal.x);
+
+        // SAT on x-axis
+        if (xOverlap >= 0) {
+
+            var yOverlap = (box1.height + box2.height) / 2 - Math.abs(normal.y);
+
+            // SAT on y-axis
+            if (yOverlap >= 0) {
+
+                let manifold = {
+                    a: box1,
+                    b: box2
+                };
+
+                // least penetration
+                if (xOverlap <= yOverlap) {
+
+                    if (normal.x < 0) {
+                        manifold.normal = new Vector({ x: -1, y: 0 });
+                    }
+                    else {
+                        manifold.normal = new Vector({ x: 1, y: 0 });
+                    }
+
+                    manifold.penetration = xOverlap;
+                }
+                else {
+
+                    if (normal.y < 0) {
+                        manifold.normal = new Vector({ x: 0, y: -1 });
+                    }
+                    else {
+                        manifold.normal = new Vector({ x: 0, y: 1 });
+                    }
+
+                    manifold.penetration = yOverlap;
+                }
+
+                return manifold;
+            }
+        }
+
+        return undefined;
     }
 
     circleVsCircle (circle1, circle2) {
@@ -120,7 +184,7 @@ class CollisionSystem {
         if (relativeVelocityProjection > 0) { return; }
 
         // TODO: calculate correct restitution
-        var restitution = 0;
+        var restitution = 0.5;
 
         var impulseScalar = -(1 + restitution) * relativeVelocityProjection;
         impulseScalar /= (entityA.components.mass.inverseMass + entityB.components.mass.inverseMass);

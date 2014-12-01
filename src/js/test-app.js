@@ -46,7 +46,7 @@ import RenderSystem from './arcade/systems/render';
 
     var entity = new Entity()
         .addComponent(new Position({
-            x: 2,
+            x: 4,
             y: 0.5
         }))
         .addComponent(new Velocity({
@@ -64,7 +64,7 @@ import RenderSystem from './arcade/systems/render';
 
     entity = new Entity()
         .addComponent(new Position({
-            x: 8,
+            x: 6.1,
             y: 0.5
         }))
         .addComponent(new Velocity({
