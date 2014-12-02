@@ -2,9 +2,9 @@ import Vector from './vector';
 
 class Position extends Vector {
 
-    constructor (options) {
+    constructor (x, y) {
 
-        super(options);
+        super(x, y);
 
         this.previous = {
             x: this.x,

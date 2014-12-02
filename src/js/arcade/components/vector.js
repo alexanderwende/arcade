@@ -4,10 +4,22 @@ const PI_HALF = 0.5 * PI;
 
 class Vector {
 
-    constructor (options) {
+    /**
+     * @constructor
+     *
+     * @param {number|object} x     The x coordinate or an object containing the coordinates of the vector
+     * @param {number} [y]          The y coordinate of the vector if first parameter is the x coordinate
+     */
+    constructor (x, y) {
 
-        this.x = options.x !== undefined ? options.x : 0;
-        this.y = options.y !== undefined ? options.y : 0;
+        if (y === undefined && typeof x === 'object') {
+            this.x = x.x !== undefined ? x.x : 0;
+            this.y = x.y !== undefined ? x.y : 0;
+        }
+        else {
+            this.x = x !== undefined ? x : 0;
+            this.y = y !== undefined ? y : 0;
+        }
     }
 
     add (...vectors) {
@@ -98,6 +110,11 @@ class Vector {
         return this;
     }
 
+    clone () {
+
+        return new this.constructor(this.x, this.y);
+    }
+
     static add (...vectors) {
 
         let x = vectors[0].x,
@@ -108,7 +125,7 @@ class Vector {
             y += vectors[i].y;
         }
 
-        return new this({ x: x, y: y });
+        return new this(x, y);
     }
 
     static subtract (...vectors) {
@@ -121,7 +138,7 @@ class Vector {
             y -= vectors[i].y;
         }
 
-        return new this({ x: x, y: y });
+        return new this(x, y);
     }
 
     static multiply (...vectors) {
@@ -134,7 +151,7 @@ class Vector {
             y *= vectors[i].y;
         }
 
-        return new this({ x: x, y: y });
+        return new this(x, y);
     }
 
     static dotProduct (vector1, vector2) {
@@ -161,7 +178,7 @@ class Vector {
 
         let length = Vector.length(vector);
 
-        return new this({ x: vector.x / length, y: vector.y / length });
+        return new this(vector.x / length, vector.y / length);
     }
 }
 

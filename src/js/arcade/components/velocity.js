@@ -2,9 +2,9 @@ import Vector from './vector';
 
 class Velocity extends Vector {
 
-    constructor (options) {
+    constructor (x, y) {
 
-        super(options);
+        super(x, y);
     }
 }
 

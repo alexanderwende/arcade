@@ -11,175 +11,212 @@ class CollisionSystem {
 
     update (entities, world) {
 
-        var i, count;
+        var collisions = [];
 
-        for (i = 0, count = entities.length; i < count; i++) {
+        // collect all collision
+        for (let entity of entities) {
 
-            let entity = entities[i];
-            let collision = entity.components.collision;
-
-            if (collision) {
+            if (entity.components.collision) {
 
                 let candidates = world.getCollisionCandidates(entity);
-                let collisions = [];
 
-                for (let k = 0, length = candidates.length; k < length; k++) {
+                for (let candidate of candidates) {
 
+                    let collision = {
+                        a: entity,
+                        b: candidate
+                    };
 
+                    if (this.checkCollision(entity, candidate, collision)) {
 
-                    let manifest = this.circleVsCircle(this.getBoundingCircle(entity), this.getBoundingCircle(candidates[k]));
-
-                    if (manifest) {
-                        manifest.a = entity;
-                        manifest.b = candidates[k];
-                        collisions.push(manifest);
+                        collisions.push(collision);
                     }
                 }
-
-                collisions.forEach(function (collision) {
-
-                    this.resolveCollision(collision);
-
-                }.bind(this));
             }
+        }
+
+        // resolve all collisions
+        for (let collision of collisions) {
+
+            this.resolveCollision(collision);
         }
     }
 
-    checkCollision (entity1, entity2) {
+    checkCollision (entityA, entityB, collision) {
 
-        var shape1 = entity1.components.collsion.shape;
-        var shape2 = entity2.components.collsion.shape;
+        var shapeA = this.getBoundingShape(entityA);
+        var shapeB = this.getBoundingShape(entityB);
 
-        if (shape1.type === Shape.TYPE.RECT) {}
+        var algorithm = this.getCollisionAlgorithm(shapeA, shapeB);
+
+        if (algorithm) {
+
+            return algorithm(shapeA, shapeB, collision);
+        }
+
+        return false;
     }
 
-    getBoundingBox (entity) {
+    /**
+     * Get the bounding shape for an entity based on its collision shape
+     *
+     * @param {Entity} entity
+     * @returns {object|undefined}
+     */
+    getBoundingShape (entity) {
 
-        var position = entity.components.position;
-        var collision = entity.components.collision;
+        var position    = entity.components.position;
+        var orientation = entity.components.orientation;
+        var shape       = entity.components.collision.shape;
 
-        var width = collision.shape.width !== undefined ? collision.shape.width / 2 : collision.shape.radius;
-        var height = collision.shape.height !== undefined ? collision.shape.height / 2 : collision.shape.radius;
+        switch (shape.type) {
 
-        return { xmin: position.x - width, ymin: position.y - height, xmax: position.x + width, ymax: position.y + height };
+            case Shape.TYPE.RECT:
+                return (orientation) ? this.getOBB(position, orientation, shape) : this.getAABB(position, shape);
+                break;
+
+            case Shape.TYPE.CIRCLE:
+                return this.getBC(position, shape);
+                break;
+        }
     }
 
-    getAABB (entity) {
+    /**
+     * Get the collision algorithm for two bounding shapes
+     *
+     * @param {object} shapeA
+     * @param {object} shapeB
+     * @returns {function|undefined}
+     */
+    getCollisionAlgorithm (shapeA, shapeB) {
 
-        var position = entity.components.position;
-        var collision = entity.components.collision;
+        var algorithm = shapeA.type + 'vs' + shapeB.type;
 
-        var width = collision.shape.width !== undefined ? collision.shape.width / 2 : collision.shape.radius;
-        var height = collision.shape.height !== undefined ? collision.shape.height / 2 : collision.shape.radius;
-
-        return {
-            x: position.x,
-            y: position.y,
-            width: width * 2,
-            height: height * 2,
-            min: {
-                x: position.x - width,
-                y: position.y - height
-            },
-            max: {
-                x: position.x + width,
-                y: position.y + height
-            }
-        };
+        return this[algorithm] || undefined;
     }
 
-    getBoundingCircle (entity) {
+    getAABB (position, shape) {
 
-        var position = entity.components.position;
-        var collision = entity.components.collision;
+        var aabb = position.clone();
 
-        var radius = collision.shape.radius !== undefined ?
-            collision.shape.radius :
-            Math.sqrt(Math.pow(collision.shape.width, 2) + Math.pow(collision.shape.height, 2)) / 2;
+        aabb.extend = new Vector({ x: shape.width / 2, y: shape.height / 2 });
+        aabb.min    = new Vector({ x: position.x - aabb.extend.x, y: position.y - aabb.extend.y });
+        aabb.max    = new Vector({ x: position.x + aabb.extend.x, y: position.y + aabb.extend.y });
+        aabb.type   = 'AABB';
 
-        return { x: position.x, y: position.y, radius: radius };
+        return aabb;
     }
 
-    AABBvsAABB (box1, box2) {
+    getOBB (position, orientation, shape) {
 
-        var normal = Vector.subtract(box2, box1);
+        var obb = position.clone();
 
-        var xOverlap = (box1.width + box2.width) / 2 - Math.abs(normal.x);
+        obb.extend = new Vector({ x: shape.width / 2, y: shape.height / 2 });
+        obb.min    = new Vector({ x: position.x - obb.extend.x, y: position.y - obb.extend.y });
+        obb.max    = new Vector({ x: position.x + obb.extend.x, y: position.y + obb.extend.y });
+        obb.type   = 'OBB';
+
+        return obb;
+    }
+
+    getBC (position, shape) {
+
+        var bc = position.clone();
+
+        bc.radius   = shape.radius;
+        bc.type     = 'BC';
+
+        return bc;
+    }
+
+    /**
+     * Test two AABBs for collision
+     *
+     * @param {object} a
+     * @param {object} b
+     * @param {object} collision
+     * @returns {boolean}
+     */
+    AABBvsAABB (a, b, collision) {
+
+        var normal = Vector.subtract(b, a);
+
+        var xOverlap = (a.extend.x + b.extend.x) - Math.abs(normal.x);
 
         // SAT on x-axis
         if (xOverlap >= 0) {
 
-            var yOverlap = (box1.height + box2.height) / 2 - Math.abs(normal.y);
+            var yOverlap = (a.extend.y + b.extend.y) - Math.abs(normal.y);
 
             // SAT on y-axis
             if (yOverlap >= 0) {
-
-                let manifold = {
-                    a: box1,
-                    b: box2
-                };
 
                 // least penetration
                 if (xOverlap <= yOverlap) {
 
                     if (normal.x < 0) {
-                        manifold.normal = new Vector({ x: -1, y: 0 });
+                        collision.normal = new Vector({ x: -1, y: 0 });
                     }
                     else {
-                        manifold.normal = new Vector({ x: 1, y: 0 });
+                        collision.normal = new Vector({ x: 1, y: 0 });
                     }
 
-                    manifold.penetration = xOverlap;
+                    collision.penetration = xOverlap;
                 }
                 else {
 
                     if (normal.y < 0) {
-                        manifold.normal = new Vector({ x: 0, y: -1 });
+                        collision.normal = new Vector({ x: 0, y: -1 });
                     }
                     else {
-                        manifold.normal = new Vector({ x: 0, y: 1 });
+                        collision.normal = new Vector({ x: 0, y: 1 });
                     }
 
-                    manifold.penetration = yOverlap;
+                    collision.penetration = yOverlap;
                 }
 
-                return manifold;
+                return true;
             }
         }
 
-        return undefined;
+        return false;
     }
 
-    circleVsCircle (circle1, circle2) {
+    /**
+     * Test two BCs for collision
+     *
+     * @param {object} a
+     * @param {object} b
+     * @param {object} collision
+     * @returns {boolean}
+     */
+    BCvsBC (a, b, collision) {
 
-        var normal = Vector.subtract(circle2, circle1);
+        var normal = Vector.subtract(b, a);
 
-        var minDistance = circle1.radius + circle2.radius;
+        var minDistance = a.radius + b.radius;
+        var distance    = Math.pow(normal.x, 2) + Math.pow(normal.y, 2);
 
-        var colliding = Math.pow(normal.x, 2) + Math.pow(normal.y, 2) <= Math.pow(minDistance, 2);
+        // square root is expensive, so we check collision with the square of the distances
+        if (distance <= Math.pow(minDistance, 2)) {
 
-        if (colliding) {
-
-            let manifold = {
-                a: circle1,
-                b: circle2
-            };
-
-            let distance = Vector.magnitude(normal);
+            // now that we know the circles are colliding, we calculate the square root
+            distance = Math.sqrt(distance);
 
             if (distance !== 0) {
-                manifold.penetration = minDistance - distance;
-                manifold.normal = { x: normal.x / distance, y: normal.y / distance };
+                collision.penetration = minDistance - distance;
+                collision.normal = normal.scale(1 / distance);
             }
             else {
-                manifold.penetration = circle1.radius;
-                manifold.normal = { x: 1, y: 0 };
+                collision.penetration = a.radius;
+                // in this case we have to simply pick a normal and stay consistent
+                collision.normal = new Vector({ x: 1, y: 0 });
             }
 
-            return manifold;
+            return true;
         }
 
-        return undefined;
+        return false;
     }
 
     resolveCollision (manifold) {

@@ -27,7 +27,7 @@ import RenderSystem from './arcade/systems/render';
 
     element.appendChild(canvas);
 
-    var world = new World();
+    var world = new World({ width: 40, height: 30 });
 
     world.addSystem(new InputSystem({}));
 
@@ -40,8 +40,9 @@ import RenderSystem from './arcade/systems/render';
     }));
 
     var shape = new Shape({
-        type: Shape.TYPE.CIRCLE,
-        radius: 1
+        type: Shape.TYPE.RECT,
+        width: 2,
+        height: 2
     });
 
     var entity = new Entity()
@@ -64,7 +65,7 @@ import RenderSystem from './arcade/systems/render';
 
     entity = new Entity()
         .addComponent(new Position({
-            x: 6.1,
+            x: 6.5,
             y: 0.5
         }))
         .addComponent(new Velocity({
@@ -120,7 +121,7 @@ import RenderSystem from './arcade/systems/render';
                     entity.components.force.x += 5;
                 },
                 40: function (entity, world) {
-                    entity.components.force.y -+ 5;
+                    entity.components.force.y += 5;
                 }
             }
         }))
@@ -128,6 +129,23 @@ import RenderSystem from './arcade/systems/render';
             type: Shape.TYPE.CIRCLE,
             radius: 0.5
         }));
+
+    world.addEntity(entity);
+
+
+
+    shape = new Shape({
+        type: Shape.TYPE.RECT,
+        width: 38,
+        height: 1
+    });
+
+    entity = new Entity()
+                   .addComponent(new Position(20, 29))
+                   .addComponent(new Velocity(0, 0))
+                   .addComponent(new Mass(Infinity))
+                   .addComponent(shape)
+                   .addComponent(new Collision({ shape: shape }));
 
     world.addEntity(entity);
 
