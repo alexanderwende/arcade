@@ -198,6 +198,22 @@ class CollisionSystem {
 
                 // Now find voronoi region of the circle's center to get the closest point of the AABB to the circle's center
                 // Then project the AABB's center and closest point on the vector as well as radius and test for overlap
+
+                // aabb right of bc
+                if (a.min.x > b.x) {
+                    // aabb below bc
+                    if (a.min.y > b.y) {
+                        normal = Vector.subtract(b, a.min);
+                    }
+                    // aabb above bc
+                    else if (a.max.y < b.y) {
+                        normal = Vector.subtract(b, {x: a.min.x, y: a.max.y});
+                    }
+                    // aabb aligned with bc
+                    else {
+                        normal = new Vector(-1, 0);
+                    }
+                }
             }
         }
 
