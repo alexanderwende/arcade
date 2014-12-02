@@ -1,4 +1,5 @@
 import Vector from '../components/vector';
+import Shape from '../components/shape';
 
 class CollisionSystem {
 
@@ -24,6 +25,8 @@ class CollisionSystem {
 
                 for (let k = 0, length = candidates.length; k < length; k++) {
 
+
+
                     let manifest = this.circleVsCircle(this.getBoundingCircle(entity), this.getBoundingCircle(candidates[k]));
 
                     if (manifest) {
@@ -40,6 +43,14 @@ class CollisionSystem {
                 }.bind(this));
             }
         }
+    }
+
+    checkCollision (entity1, entity2) {
+
+        var shape1 = entity1.components.collsion.shape;
+        var shape2 = entity2.components.collsion.shape;
+
+        if (shape1.type === Shape.TYPE.RECT) {}
     }
 
     getBoundingBox (entity) {
