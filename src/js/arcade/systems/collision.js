@@ -182,6 +182,28 @@ class CollisionSystem {
         return false;
     }
 
+    AABBvsBC (a, b, collision) {
+
+        var normal = Vector.subtract(b, a);
+
+        var xOverlap = (a.extend.x + b.radius) - Math.abs(normal.x);
+
+        // SAT on x-axis
+        if (xOverlap >= 0) {
+
+            var yOverlap = (a.extend.y + b.radius) - Math.abs(normal.y);
+
+            // SAT on y-axis
+            if (yOverlap >= 0) {
+
+                // Now find voronoi region of the circle's center to get the closest point of the AABB to the circle's center
+                // Then project the AABB's center and closest point on the vector as well as radius and test for overlap
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Test two BCs for collision
      *
