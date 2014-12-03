@@ -182,86 +182,6 @@ class CollisionSystem {
         return false;
     }
 
-    AABBvsBC (a, b, collision) {
-
-        var normal = Vector.subtract(b, a);
-
-        var xOverlap = (a.extend.x + b.radius) - Math.abs(normal.x);
-
-        // SAT on x-axis
-        if (xOverlap >= 0) {
-
-            var yOverlap = (a.extend.y + b.radius) - Math.abs(normal.y);
-
-            // SAT on y-axis
-            if (yOverlap >= 0) {
-
-                // Now find voronoi region of the circle's center to get the closest point of the AABB to the circle's center
-                // Then project the AABB's center and closest point on the vector as well as radius and test for overlap
-
-                // aabb right of bc
-                if (a.min.x > b.x) {
-                    // aabb below bc
-                    if (a.min.y > b.y) {
-                        normal = Vector.subtract(b, a.min);
-                    }
-                    // aabb above bc
-                    else if (a.max.y < b.y) {
-                        normal = Vector.subtract(b, {x: a.min.x, y: a.max.y});
-                    }
-                    // aabb aligned with bc
-                    else {
-                        collision.normal = new Vector(-1, 0);
-                        collision.penetration = a.extend.x + b.radius - Math.abs(normal.x);
-                    }
-                }
-                // aabb left of bc
-                else if (a.max.x < b.x) {
-                    // aabb below bc
-                    if (a.min.y > b.y) {
-                        normal = Vector.subtract(b, {x: a.max.x, y: a.min.y});
-                    }
-                    // aabb above bc
-                    else if (a.max.y < b.y) {
-                        normal = Vector.subtract(b, a.max);
-                    }
-                    // aabb aligned with bc
-                    else {
-                        collision.normal = new Vector(1, 0);
-                        collision.penetration = a.extend.x + b.radius - Math.abs(normal.x);
-                    }
-                }
-                else {
-                    // aabb below bc
-                    if (a.min.y > b.y) {
-                        collision.normal = new Vector(0, -1);
-                        collision.penetration = a.extend.y + b.radius - Math.abs(normal.y);
-                    }
-                    // aabb above bc
-                    else {
-                        collision.normal = new Vector(0, 1);
-                        collision.penetration = a.extend.y + b.radius - Math.abs(normal.y);
-                    }
-                }
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    BCvsAABB (a, b, collision) {
-
-        var result = this.AABBvsBC(b, a, collision);
-
-        if (result) {
-            collision.normal.scale(-1);
-        }
-
-        return result;
-    }
-
     /**
      * Test two BCs for collision
      *
@@ -297,6 +217,55 @@ class CollisionSystem {
         }
 
         return false;
+    }
+
+    /**
+     * Test an AABB and a BC for collision
+     *
+     * @param {object} a
+     * @param {object} b
+     * @param {object} collision
+     * @returns {boolean}
+     */
+    AABBvsBC (a, b, collision) {
+
+        var ab = Vector.subtract(b, a);
+
+        // we can now determine the closest point on the AABB to the BC by projecting
+        // the vector ab on the edges of the AABB and limiting it (clamping it) to the AABB
+        // as ab originates in the AABB's center, min and max are the negative and positive extend of the AABB
+        var closest = Vector.clamp(ab, Vector.scale(a.extend, -1), a.extend);
+
+        // the collision normal is then simply the vector from the closest point on the AABB to the BC center
+        var normal = Vector.subtract(ab, closest);
+
+        var minDistance = b.radius;
+        var distance    = Math.pow(normal.x, 2) + Math.pow(normal.y, 2);
+
+        // square root is expensive, so we check collision with the square of the distances
+        if (distance <= Math.pow(minDistance, 2)) {
+
+            // now that we know there's a collision, we calculate the square root
+            distance = Math.sqrt(distance);
+
+            collision.normal = normal.scale(1 / distance);
+            collision.penetration = minDistance - distance;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    BCvsAABB (a, b, collision) {
+
+        var result = this.AABBvsBC(b, a, collision);
+
+        if (result) {
+            collision.normal.scale(-1);
+        }
+
+        return result;
     }
 
     resolveCollision (manifold) {

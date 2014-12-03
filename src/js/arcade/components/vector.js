@@ -180,6 +180,14 @@ class Vector {
 
         return new this(vector.x / length, vector.y / length);
     }
+
+    static clamp (vector, min, max) {
+
+        let x = Math.max(Math.min(vector.x, max.x), min.x);
+        let y = Math.max(Math.min(vector.y, max.y), min.y);
+
+        return new Vector(x, y);
+    }
 }
 
 export default Vector;

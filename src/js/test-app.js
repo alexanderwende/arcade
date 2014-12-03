@@ -50,7 +50,7 @@ import RenderSystem from './arcade/systems/render';
     entity = new Entity()
         .addComponent(new Position({
             x: 4,
-            y: 0.5
+            y: 3
         }))
         .addComponent(new Velocity({
             x: 2,
@@ -74,7 +74,7 @@ import RenderSystem from './arcade/systems/render';
     entity = new Entity()
         .addComponent(new Position({
             x: 6.5,
-            y: 0.5
+            y: 3
         }))
         .addComponent(new Velocity({
             x: 0,
@@ -106,6 +106,13 @@ import RenderSystem from './arcade/systems/render';
 
     world.addEntity(entity);
 
+    // Player
+
+    shape = new Shape({
+        type: Shape.TYPE.CIRCLE,
+        radius: 1
+    });
+
     entity = new Entity()
         .addComponent(new Position({
             x: 10,
@@ -116,6 +123,9 @@ import RenderSystem from './arcade/systems/render';
             y: 0
         }))
         .addComponent(new Force({}))
+        .addComponent(new Collision({
+            shape: shape
+        }))
         .addComponent(new Mass({mass: 0.5}))
         .addComponent(new Input({
             keys: {
@@ -133,14 +143,11 @@ import RenderSystem from './arcade/systems/render';
                 }
             }
         }))
-        .addComponent(new Shape({
-            type: Shape.TYPE.CIRCLE,
-            radius: 0.5
-        }));
+        .addComponent(shape);
 
     world.addEntity(entity);
 
-
+    // Bounds
 
     shape = new Shape({
         type: Shape.TYPE.RECT,
@@ -149,11 +156,44 @@ import RenderSystem from './arcade/systems/render';
     });
 
     entity = new Entity()
-                   .addComponent(new Position(20, 29))
-                   .addComponent(new Velocity(0, 0))
-                   .addComponent(new Mass(Infinity))
-                   .addComponent(shape)
-                   .addComponent(new Collision({ shape: shape }));
+       .addComponent(new Position(20, 29))
+       .addComponent(new Velocity(0, 0))
+       .addComponent(new Mass(Infinity))
+       .addComponent(shape)
+       .addComponent(new Collision({ shape: shape }));
+
+    world.addEntity(entity);
+
+    entity = new Entity()
+       .addComponent(new Position(20, 1))
+       .addComponent(new Velocity(0, 0))
+       .addComponent(new Mass(Infinity))
+       .addComponent(shape)
+       .addComponent(new Collision({ shape: shape }));
+
+    world.addEntity(entity);
+
+    shape = new Shape({
+        type: Shape.TYPE.RECT,
+        width: 1,
+        height: 25
+    });
+
+    entity = new Entity()
+       .addComponent(new Position(1, 15))
+       .addComponent(new Velocity(0, 0))
+       .addComponent(new Mass(Infinity))
+       .addComponent(shape)
+       .addComponent(new Collision({ shape: shape }));
+
+    world.addEntity(entity);
+
+    entity = new Entity()
+       .addComponent(new Position(39, 15))
+       .addComponent(new Velocity(0, 0))
+       .addComponent(new Mass(Infinity))
+       .addComponent(shape)
+       .addComponent(new Collision({ shape: shape }));
 
     world.addEntity(entity);
 
