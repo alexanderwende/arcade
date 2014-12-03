@@ -39,19 +39,21 @@ import RenderSystem from './arcade/systems/render';
         context: canvas.getContext('2d')
     }));
 
-    var shape = new Shape({
-        type: Shape.TYPE.RECT,
-        width: 2,
-        height: 2
+    var shape;
+    var entity;
+
+    shape = new Shape({
+        type: Shape.TYPE.CIRCLE,
+        radius: 1
     });
 
-    var entity = new Entity()
+    entity = new Entity()
         .addComponent(new Position({
             x: 4,
             y: 0.5
         }))
         .addComponent(new Velocity({
-            x: 0,
+            x: 2,
             y: 0
         }))
         .addComponent(new Gravity({}))
@@ -62,6 +64,12 @@ import RenderSystem from './arcade/systems/render';
         .addComponent(shape);
 
     world.addEntity(entity);
+
+    shape = new Shape({
+        type: Shape.TYPE.RECT,
+        width: 2,
+        height: 2
+    });
 
     entity = new Entity()
         .addComponent(new Position({

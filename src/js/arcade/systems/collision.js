@@ -92,7 +92,7 @@ class CollisionSystem {
 
         var algorithm = shapeA.type + 'vs' + shapeB.type;
 
-        return this[algorithm] || undefined;
+        return this[algorithm].bind(this) || undefined;
     }
 
     getAABB (position, shape) {
@@ -211,13 +211,55 @@ class CollisionSystem {
                     }
                     // aabb aligned with bc
                     else {
-                        normal = new Vector(-1, 0);
+                        collision.normal = new Vector(-1, 0);
+                        collision.penetration = a.extend.x + b.radius - Math.abs(normal.x);
                     }
                 }
+                // aabb left of bc
+                else if (a.max.x < b.x) {
+                    // aabb below bc
+                    if (a.min.y > b.y) {
+                        normal = Vector.subtract(b, {x: a.max.x, y: a.min.y});
+                    }
+                    // aabb above bc
+                    else if (a.max.y < b.y) {
+                        normal = Vector.subtract(b, a.max);
+                    }
+                    // aabb aligned with bc
+                    else {
+                        collision.normal = new Vector(1, 0);
+                        collision.penetration = a.extend.x + b.radius - Math.abs(normal.x);
+                    }
+                }
+                else {
+                    // aabb below bc
+                    if (a.min.y > b.y) {
+                        collision.normal = new Vector(0, -1);
+                        collision.penetration = a.extend.y + b.radius - Math.abs(normal.y);
+                    }
+                    // aabb above bc
+                    else {
+                        collision.normal = new Vector(0, 1);
+                        collision.penetration = a.extend.y + b.radius - Math.abs(normal.y);
+                    }
+                }
+
+                return true;
             }
         }
 
         return false;
+    }
+
+    BCvsAABB (a, b, collision) {
+
+        var result = this.AABBvsBC(b, a, collision);
+
+        if (result) {
+            collision.normal.scale(-1);
+        }
+
+        return result;
     }
 
     /**
