@@ -67,8 +67,10 @@ import RenderSystem from './arcade/systems/render';
 
     shape = new Shape({
         type: Shape.TYPE.RECT,
+        //type: Shape.TYPE.CIRCLE,
         width: 1.5,
         height: 1.5
+        //radius: 0.75
     });
 
     entity = new Entity()
