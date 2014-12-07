@@ -7,6 +7,7 @@ import Gravity from './arcade/components/gravity';
 import Force from './arcade/components/force';
 import Mass from './arcade/components/mass';
 import Shape from './arcade/components/shape';
+import Material from './arcade/components/material';
 import Input from './arcade/components/input';
 import Collision from './arcade/components/collision';
 
@@ -40,11 +41,18 @@ import RenderSystem from './arcade/systems/render';
     }));
 
     var shape;
+    var material;
     var entity;
 
     shape = new Shape({
         type: Shape.TYPE.CIRCLE,
         radius: 1
+    });
+
+    material = new Material({
+        restitution: 0.5,
+        density: 1,
+        type: Material.TYPE.WOOD
     });
 
     entity = new Entity()
@@ -61,6 +69,7 @@ import RenderSystem from './arcade/systems/render';
             shape: shape
         }))
         .addComponent(new Mass({mass: 1}))
+        .addComponent(material)
         .addComponent(shape);
 
     world.addEntity(entity);
@@ -87,6 +96,7 @@ import RenderSystem from './arcade/systems/render';
             shape: shape
         }))
         .addComponent(new Mass({mass: 0.5}))
+        .addComponent(material)
         .addComponent(shape);
 
     world.addEntity(entity);
@@ -104,6 +114,7 @@ import RenderSystem from './arcade/systems/render';
             shape: shape
         }))
         .addComponent(new Mass({mass: 0}))
+        .addComponent(material)
         .addComponent(shape);
 
     world.addEntity(entity);
@@ -145,6 +156,7 @@ import RenderSystem from './arcade/systems/render';
                 }
             }
         }))
+        .addComponent(material)
         .addComponent(shape);
 
     world.addEntity(entity);
@@ -158,20 +170,22 @@ import RenderSystem from './arcade/systems/render';
     });
 
     entity = new Entity()
-       .addComponent(new Position(20, 29))
-       .addComponent(new Velocity(0, 0))
-       .addComponent(new Mass(0))
-       .addComponent(shape)
-       .addComponent(new Collision({ shape: shape }));
+        .addComponent(new Position(20, 29))
+        .addComponent(new Velocity(0, 0))
+        .addComponent(new Mass(0))
+        .addComponent(material)
+        .addComponent(shape)
+        .addComponent(new Collision({ shape: shape }));
 
     world.addEntity(entity);
 
     entity = new Entity()
-       .addComponent(new Position(20, 1))
-       .addComponent(new Velocity(0, 0))
-       .addComponent(new Mass(0))
-       .addComponent(shape)
-       .addComponent(new Collision({ shape: shape }));
+        .addComponent(new Position(20, 1))
+        .addComponent(new Velocity(0, 0))
+        .addComponent(new Mass(0))
+        .addComponent(material)
+        .addComponent(shape)
+        .addComponent(new Collision({ shape: shape }));
 
     world.addEntity(entity);
 
@@ -182,20 +196,22 @@ import RenderSystem from './arcade/systems/render';
     });
 
     entity = new Entity()
-       .addComponent(new Position(1, 15))
-       .addComponent(new Velocity(0, 0))
-       .addComponent(new Mass(0))
-       .addComponent(shape)
-       .addComponent(new Collision({ shape: shape }));
+        .addComponent(new Position(1, 15))
+        .addComponent(new Velocity(0, 0))
+        .addComponent(new Mass(0))
+        .addComponent(material)
+        .addComponent(shape)
+        .addComponent(new Collision({ shape: shape }));
 
     world.addEntity(entity);
 
     entity = new Entity()
-       .addComponent(new Position(39, 15))
-       .addComponent(new Velocity(0, 0))
-       .addComponent(new Mass(0))
-       .addComponent(shape)
-       .addComponent(new Collision({ shape: shape }));
+        .addComponent(new Position(39, 15))
+        .addComponent(new Velocity(0, 0))
+        .addComponent(new Mass(0))
+        .addComponent(material)
+        .addComponent(shape)
+        .addComponent(new Collision({ shape: shape }));
 
     world.addEntity(entity);
 
