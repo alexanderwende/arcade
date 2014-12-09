@@ -22,7 +22,7 @@ class Material {
         return this.FRICTION[a.type][b.type].STATIC;
     }
 
-    static getKineticFriction (a, b) {
+    static getDynamicFriction (a, b) {
 
         return this.FRICTION[a.type][b.type].KINETIC;
     }

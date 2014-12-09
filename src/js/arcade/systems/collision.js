@@ -1,5 +1,6 @@
 import Vector from '../components/vector';
 import Shape from '../components/shape';
+import Material from '../components/material';
 
 class CollisionSystem {
 
@@ -276,6 +277,12 @@ class CollisionSystem {
         var velocityA = entityA.components.velocity;
         var velocityB = entityB.components.velocity;
 
+        var materialA = entityA.components.material;
+        var materialB = entityB.components.material;
+
+        var massA = entityA.components.mass;
+        var massB = entityB.components.mass;
+
         var relativeVelocity = Vector.subtract(velocityB, velocityA);
 
         var relativeVelocityProjection = Vector.dotProduct(relativeVelocity, manifold.normal);
@@ -287,37 +294,41 @@ class CollisionSystem {
         var restitution = 0.5;
 
         var impulseScalar = -(1 + restitution) * relativeVelocityProjection;
-        impulseScalar /= (entityA.components.mass.inverseMass + entityB.components.mass.inverseMass);
+        impulseScalar /= (massA.inverseMass + massB.inverseMass);
 
         var impulse = Vector.scale(manifold.normal, impulseScalar);
 
-        velocityA.subtract(Vector.scale(impulse, entityA.components.mass.inverseMass));
-        velocityB.add(Vector.scale(impulse, entityB.components.mass.inverseMass));
+        velocityA.subtract(Vector.scale(impulse, massA.inverseMass));
+        velocityB.add(Vector.scale(impulse, massB.inverseMass));
 
         // friction
-//        relativeVelocity = Vector.subtract(velocityB, velocityA);
-//
-//        var tangent = Vector.subtract(relativeVelocity, Vector.scale(manifold.normal, Vector.dotProduct(relativeVelocity, manifold.normal)));
-//
-//        tangent.normalize();
-//
-//        var frictionScalar = -Vector.dotProduct(relativeVelocity, tangent);
-//        frictionScalar /= (entityA.components.mass.inverseMass + entityB.components.mass.inverseMass);
-//
-//        var staticFriction = entityA.components.material.getStaticFriction(entityB.components.material);
-//
-//        var frictionImpulse;
-//
-//        if (Math.abs(frictionScalar) < impulseScalar * staticFriction) {
-//            frictionImpulse = Vector.scale(tangent, frictionScalar);
-//        }
-//        else {
-//            var dynamicFriction = entityA.components.material.getDynamicFriction(entityB.components.material);
-//            frictionImpulse = Vector.scale(tangent, -impulseScalar * dynamicFriction);
-//        }
-//
-//        velocityA.subtract(Vector.scale(frictionImpulse, entityA.components.mass.inverseMass));
-//        velocityB.add(Vector.scale(frictionImpulse, entityB.components.mass.inverseMass));
+        relativeVelocity = Vector.subtract(velocityB, velocityA);
+
+        var tangent = Vector.subtract(relativeVelocity, Vector.scale(manifold.normal, Vector.dotProduct(relativeVelocity, manifold.normal)));
+
+        if (tangent.x !== 0 || tangent.y !== 0) {
+
+            tangent.normalize();
+
+            var frictionScalar = Vector.dotProduct(relativeVelocity, tangent) * -1;
+            frictionScalar /= (massA.inverseMass + massB.inverseMass);
+
+            var staticFriction = Material.getStaticFriction(materialA, materialB);
+
+            var frictionImpulse;
+
+            if (Math.abs(frictionScalar) < Math.abs(impulseScalar) * staticFriction) {
+                frictionImpulse = Vector.scale(tangent, frictionScalar);
+            }
+            else {
+                var dynamicFriction = Material.getDynamicFriction(materialA, materialB);
+                frictionImpulse = Vector.scale(tangent, -impulseScalar * dynamicFriction);
+            }
+
+            velocityA.subtract(Vector.scale(frictionImpulse, massA.inverseMass));
+            velocityB.add(Vector.scale(frictionImpulse, massB.inverseMass));
+        }
+
 
         this.correctPosition(manifold);
     }
@@ -337,52 +348,6 @@ class CollisionSystem {
             a.components.position.subtract(Vector.scale(correctionVector, a.components.mass.inverseMass));
             b.components.position.add(Vector.scale(correctionVector, b.components.mass.inverseMass));
         }
-    }
-
-    getNormalForce (manifold) {
-
-        var a = manifold.a;
-        var b = manifold.b;
-
-        var massA = a.components.mass;
-        var massB = b.components.mass;
-
-        var forceA = new Vector(0, massA.mass * 9.81);
-        var forceB = new Vector(0, massB.mass * 9.81);
-
-        var netForce = Vector.subtract(forceB, forceA);
-
-        var normal = manifold.normal;
-
-        var normalForce = Vector.dotProduct(netForce, normal) / (massA.inverseMass + massB.inverseMass);
-
-        return normalForce;
-    }
-
-    getFrictionForce (manifold) {
-
-        var a = manifold.a;
-        var b = manifold.b;
-
-        var materialA = a.components.material;
-        var materialB = b.components.material;
-
-        var velocityA = a.components.velocity;
-        var velocityB = b.components.velocity;
-
-        var normal = manifold.normal;
-
-        var normalForce = this.getNormalForce(manifold);
-
-        var reltiveVelocity = Vector.subtract(velocityB, velocityA);
-
-        // the correct surface tangent is the orthogonal part of the relative velocity to the collision normal
-        var tangent = Vector.subtract(relativeVelocity, Vector.scale(normal, Vector.dotProduct(relativeVelocity, normal)));
-
-        var staticFriction = Material.getStaticFriction(meterialA, materialB);
-        var kineticFriction = Material.getKineticFriction(meterialA, materialB);
-
-
     }
 }
 
