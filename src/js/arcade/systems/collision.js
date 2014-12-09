@@ -290,8 +290,7 @@ class CollisionSystem {
         // velocities are separating, no resolution
         if (relativeVelocityProjection > 0) { return; }
 
-        // TODO: calculate correct restitution
-        var restitution = 0.5;
+        var restitution = Material.getRestitution(materialA, materialB);
 
         var impulseScalar = -(1 + restitution) * relativeVelocityProjection;
         impulseScalar /= (massA.inverseMass + massB.inverseMass);

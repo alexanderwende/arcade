@@ -26,6 +26,12 @@ class Material {
 
         return this.FRICTION[a.type][b.type].KINETIC;
     }
+
+    static getRestitution (a, b) {
+
+        // TODO: implement lookup table for restitution
+        return Math.min(a.restitution, b.restitution);
+    }
 }
 
 Material.id = 'material';
