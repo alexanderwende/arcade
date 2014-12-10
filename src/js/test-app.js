@@ -222,6 +222,10 @@ import RenderSystem from './arcade/systems/render';
     var game = {
 
         requestId: 0,
+        time: 0,
+        delta: 0,
+        accumulator: 0,
+        step: 1000 / 60,
 
         start: function () {
             this.requestId = window.requestAnimationFrame(this.loop.bind(this));
@@ -240,6 +244,32 @@ import RenderSystem from './arcade/systems/render';
         },
 
         loop: function (time) {
+
+//            this.delta  = time - this.time;
+//            this.time   = time;
+//
+//            this._debug.upf = 0;
+//
+//            this.accumulator += this.delta;
+//
+//            while (this.accumulator >= this.step) {
+//
+//                this.update(this.step);
+//                this.accumulator -= this.step;
+//                this._debug.upf++;
+//            }
+//
+//            this._debug.updateTime = window.performance.now() - time;
+//
+//            this.render(this.enableSmoothing ? (this.accumulator / this.step) : 0);
+//
+//            this._debug.renderTime = window.performance.now() - time - this._debug.updateTime;
+//
+//            this._debug.frameTime = window.performance.now() - time;
+//
+//            this.requestId = window.requestAnimationFrame(this.loop.bind(this));
+
+
             world.update();
             this.requestId = window.requestAnimationFrame(this.loop.bind(this));
         }

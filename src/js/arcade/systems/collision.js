@@ -40,6 +40,7 @@ class CollisionSystem {
         for (let collision of collisions) {
 
             this.resolveCollision(collision);
+            this.correctPosition(collision);
         }
     }
 
@@ -283,53 +284,57 @@ class CollisionSystem {
         var massA = entityA.components.mass;
         var massB = entityB.components.mass;
 
-        var relativeVelocity = Vector.subtract(velocityB, velocityA);
-
-        var relativeVelocityProjection = Vector.dotProduct(relativeVelocity, manifold.normal);
+        var relativeVelocity    = Vector.subtract(velocityB, velocityA);
+        var velocityProjection  = Vector.dotProduct(relativeVelocity, manifold.normal);
 
         // velocities are separating, no resolution
-        if (relativeVelocityProjection > 0) { return; }
+        if (velocityProjection > 0) { return; }
 
-        var restitution = Material.getRestitution(materialA, materialB);
+        var restitution         = Material.getRestitution(materialA, materialB);
+        var totalInverseMass    = massA.inverseMass + massB.inverseMass;
 
-        var impulseScalar = -(1 + restitution) * relativeVelocityProjection;
-        impulseScalar /= (massA.inverseMass + massB.inverseMass);
+        // in a collision, the objects velocity gets reflected along the collision normal
+        // due to the normal force excerted on it by the colliding object
+        // as the collision time is very short, we can express this normal force as an impulse
+        // which represents the normal force over the collision time and apply the impulse to the objects
 
-        var impulse = Vector.scale(manifold.normal, impulseScalar);
+        var normalImpulseScalar = (-(1 + restitution) * velocityProjection) / totalInverseMass;
 
-        velocityA.subtract(Vector.scale(impulse, massA.inverseMass));
-        velocityB.add(Vector.scale(impulse, massB.inverseMass));
+        var normalImpulse = Vector.scale(manifold.normal, normalImpulseScalar);
 
-        // friction
-        relativeVelocity = Vector.subtract(velocityB, velocityA);
+        // apply the normal impulse
+        velocityA.subtract(Vector.scale(normalImpulse, massA.inverseMass));
+        velocityB.add(Vector.scale(normalImpulse, massB.inverseMass));
 
-        var tangent = Vector.subtract(relativeVelocity, Vector.scale(manifold.normal, Vector.dotProduct(relativeVelocity, manifold.normal)));
+        // the friction forces during a collision depend on the normal force
+        // the normal impulse represents the integral of the normal force during the collision
+        // and we can derive the friction impulse from the normal impulse
+        // the friction impulse will point along the collision tangent in negative direction
 
-        if (tangent.x !== 0 || tangent.y !== 0) {
+        var tangent = new Vector(-manifold.normal.y, manifold.normal.x);
 
-            tangent.normalize();
+        velocityProjection = relativeVelocity.dotProduct(tangent);
 
-            var frictionScalar = Vector.dotProduct(relativeVelocity, tangent) * -1;
-            frictionScalar /= (massA.inverseMass + massB.inverseMass);
+        if (velocityProjection === 0) { return; }
+        if (velocityProjection < 0) { tangent.scale(-1); }
 
-            var staticFriction = Material.getStaticFriction(materialA, materialB);
+        var frictionImpulseScalar = (velocityProjection < 0 ? velocityProjection : -velocityProjection) / totalInverseMass;
 
-            var frictionImpulse;
+        var frictionImpulse;
 
-            if (Math.abs(frictionScalar) < Math.abs(impulseScalar) * staticFriction) {
-                frictionImpulse = Vector.scale(tangent, frictionScalar);
-            }
-            else {
-                var dynamicFriction = Material.getDynamicFriction(materialA, materialB);
-                frictionImpulse = Vector.scale(tangent, -impulseScalar * dynamicFriction);
-            }
+        var staticFriction = Material.getStaticFriction(materialA, materialB);
+        var dynamicFriction = Material.getDynamicFriction(materialA, materialB);
 
-            velocityA.subtract(Vector.scale(frictionImpulse, massA.inverseMass));
-            velocityB.add(Vector.scale(frictionImpulse, massB.inverseMass));
+        // TODO: When should we use static vs dynamic friction? Do we need to affect forces?
+        if (Math.abs(frictionImpulseScalar) < normalImpulseScalar * staticFriction) {
+            frictionImpulse = Vector.scale(tangent, frictionImpulseScalar);
+        }
+        else {
+            frictionImpulse = Vector.scale(tangent, -normalImpulseScalar * dynamicFriction);
         }
 
-
-        this.correctPosition(manifold);
+        velocityA.subtract(Vector.scale(frictionImpulse, massA.inverseMass));
+        velocityB.add(Vector.scale(frictionImpulse, massB.inverseMass));
     }
 
     correctPosition (manifold) {

@@ -57,6 +57,16 @@ class Vector {
         return this.x * vector.x + this.y * vector.y;
     }
 
+    crossProduct (b) {
+
+        if (typeof b === 'number') {
+            return new this.constructor(b * this.y, -b * this.x);
+        }
+        else if (typeof b === 'object') {
+            return this.x * b.y - this.y * b.x;
+        }
+    }
+
     scale (factor) {
 
         this.x *= factor;
@@ -157,6 +167,30 @@ class Vector {
     static dotProduct (vector1, vector2) {
 
         return vector1.x * vector2.x + vector1.y * vector2.y;
+    }
+
+    static crossProduct (a, b) {
+
+        if (typeof a === 'object') {
+
+            if (typeof b === 'object') {
+
+                return a.x * b.y - a.y * b.x;
+            }
+            else if (typeof b === 'number') {
+
+                return new this(b * a.y, -b * a.x);
+            }
+        }
+        else if (typeof a === 'number') {
+
+            if (typeof b === 'object') {
+
+                return new this(-a * b.y, a * b.x);
+            }
+        }
+
+        return undefined;
     }
 
     static scale (vector, factor) {

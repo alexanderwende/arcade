@@ -30,8 +30,6 @@ class RenderSystem {
 
         var i, count;
 
-        this.context.setTransform(this.viewport.scaleX, 0, 0, this.viewport.scaleY, 0, 0);
-
         this.context.clearRect(0, 0, this.viewport.width, this.viewport.height);
 
         this.context.globalAlpha = 1;
@@ -62,21 +60,26 @@ class RenderSystem {
 
         //context.transform(cos, sin, -sin, cos, x, y);
 
-        context.transform(1, 0, 0, 1, position.x, position.y);
+        context.transform(1, 0, 0, 1, position.x * this.viewport.scaleX, position.y * this.viewport.scaleY);
 
         switch (shape.type) {
 
             case Shape.TYPE.RECT:
 
-                context.fillRect(-shape.width / 2, -shape.height / 2, shape.width, shape.height);
+                let width = shape.width * this.viewport.scaleX;
+                let height = shape.height * this.viewport.scaleY;
+
+                context.fillRect(-width / 2, -height / 2, width, height);
 
                 break;
 
             case Shape.TYPE.CIRCLE:
 
+                let radius = shape.radius * this.viewport.scaleX;
+
                 context.beginPath();
 
-                context.arc(0, 0, shape.radius, 0, PI_DOUBLE);
+                context.arc(0, 0, radius, 0, PI_DOUBLE);
 
                 context.fill();
 
@@ -84,8 +87,8 @@ class RenderSystem {
 
             case Shape.TYPE.TRIANGLE:
 
-                let x = shape.width / 2;
-                let y = shape.height / 2;
+                let x = shape.width * this.viewport.scaleX / 2;
+                let y = shape.height * this.viewport.scaleY / 2;
 
                 context.beginPath();
 
