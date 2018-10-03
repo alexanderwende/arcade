@@ -57,7 +57,7 @@ export default class TestGame extends Game {
 
     init () {
 
-        super();
+        super.init();
 
         this.scene = new TestScene({
             game: this
@@ -84,14 +84,14 @@ export default class TestGame extends Game {
 
     start () {
 
-        super();
+        super.start();
 
         this.scene.input.start();
     }
 
     stop () {
 
-        super();
+        super.stop();
 
         this.scene.input.stop();
     }

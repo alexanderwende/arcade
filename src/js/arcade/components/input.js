@@ -4,7 +4,7 @@ class Input {
 
     constructor (options) {
 
-        this.keys = options.keys || {};
+        this.keys = options && options.keys || {};
     }
 }
 

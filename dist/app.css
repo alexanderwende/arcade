@@ -1,0 +1,91 @@
+
+body {
+    font: 12px/normal Arial, sans-serif;
+    background: #eee;
+}
+
+input, button {
+    vertical-align: middle;
+}
+
+header {
+    padding: 2em;
+    font-size: 1em;
+    line-height: 2em;
+    border-bottom: 1px solid #333;
+    background: linear-gradient(#444, #404040);
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, .25);
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+header > h1 {
+    flex: 1 0 auto;
+    align-self: flex-start;
+    margin: 0;
+    color: #fff;
+    font-size: inherit;
+    line-height: inherit;
+    text-transform: uppercase;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+header > menu {
+    flex: 1 1 auto;
+    align-self: flex-end;
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    text-align: right;
+}
+
+header > button {
+    padding: 0 0.5em;
+    margin: 0;
+    font: inherit;
+    font-weight: normal;
+    color: #aaa;
+    line-height: 2em;
+    vertical-align: middle;
+    background: #444;
+
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-bottom-color: rgba(255, 255, 255, 0.05);
+
+    outline: none;
+
+    box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.05), inset 0px -1px 1px rgba(0, 0, 0, 0.2);
+
+    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.5);
+}
+
+header > button:focus {
+    outline: none;
+}
+
+header > button::-moz-focus-inner {
+    border: none;
+    outline: none;
+}
+
+header > button:hover {
+    background: #454545;
+}
+
+header > button:active {
+    color: #888;
+    background: #444;
+    box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.1), inset 0px -1px 1px rgba(0, 0, 0, 0.2);
+}
+
+main {
+    padding: 2em;
+}
+
+#game {
+    width: 800px;
+    height: 600px;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+    background: #fff;
+}
